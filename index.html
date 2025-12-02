@@ -2,25 +2,31 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>ZCP Proxy Dashboard</title>
+  <title>ZCP Proxy</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header>
-    <h1>ZCP Proxy</h1>
-  </header>
+  <div class="container">
+    <header>
+      <h1>ZCP Proxy</h1>
+      <p>軽量＆安定プロキシ</p>
+    </header>
 
-  <main>
-    <label for="target-url">アクセスしたいURL:</label>
-    <input type="text" id="target-url" placeholder="https://example.com"><br><br>
+    <main>
+      <div class="input-card">
+        <input type="text" id="target-url" placeholder="アクセスしたいURLを入力">
+        <button id="fetch-btn">アクセス</button>
+      </div>
 
-    <button id="fetch-btn">アクセス</button>
+      <div id="status">待機中...</div>
 
-    <h2>結果</h2>
-    <div id="result-div" style="border:1px solid #ccc; padding:10px; min-height:500px; overflow:auto;"></div>
-  </main>
+      <div id="result-div" class="result-card"></div>
+    </main>
 
-  <footer id="footer"></footer>
+    <footer>
+      <p>連絡先: takorou.0001@gmail.com</p>
+    </footer>
+  </div>
 
   <script src="script.js"></script>
 </body>
