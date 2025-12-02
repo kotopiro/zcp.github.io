@@ -7,22 +7,21 @@
 </head>
 <body>
   <header>
-    <h1>ZCP Proxy Dashboard</h1>
-    <nav>
-      <button id="btn-about">About</button>
-      <button id="btn-contact">Contact</button>
-    </nav>
+    <h1>ZCP Proxy</h1>
   </header>
 
   <main>
-    <section id="content">
-      <h2>Welcome!</h2>
-      <p>ここにあなたのプロキシ情報やダッシュボードが入ります。</p>
-    </section>
+    <label for="target-url">アクセスしたいURL:</label>
+    <input type="text" id="target-url" placeholder="https://example.com"><br><br>
+
+    <button id="fetch-btn">アクセス</button>
+
+    <h2>結果</h2>
+    <iframe id="result-frame" style="width:100%; height:500px;"></iframe>
   </main>
 
-  <footer>
-    <p>© 2025 ZCP Project</p>
+  <footer id="footer">
+    <!-- ここにJSで連絡先を追加 -->
   </footer>
 
   <script src="script.js"></script>
