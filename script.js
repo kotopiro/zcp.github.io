@@ -1,23 +1,29 @@
 const proxyServer = 'https://proxy-server-03vk.onrender.com/proxy';
 
-// フッターに連絡先を表示
-document.getElementById('footer').innerHTML = `<p>連絡先: sample.com</p>`;
+const statusDiv = document.getElementById('status');
+const resultDiv = document.getElementById('result-div');
 
 document.getElementById('fetch-btn').addEventListener('click', async () => {
-  const url = document.getElementById('target-url').value;
+  const url = document.getElementById('target-url').value.trim();
   if (!url) return alert('URLを入力してください');
 
-  const proxyUrl = `${proxyServer}?url=${encodeURIComponent(url)}`;
-
-  const resultDiv = document.getElementById('result-div');
-  resultDiv.innerHTML = `<p>読み込み中…</p>`; // 読み込み表示
+  statusDiv.textContent = '読み込み中…';
+  resultDiv.innerHTML = ''; // 前回の結果をクリア
 
   try {
-    const res = await fetch(proxyUrl);
+    const res = await fetch(`${proxyServer}?url=${encodeURIComponent(url)}`);
+    if (!res.ok) throw new Error('取得失敗');
+
     const html = await res.text();
-    resultDiv.innerHTML = html; // HTMLを挿入
+
+    // 軽量化: scriptタグは削除して表示
+    const cleanHtml = html.replace(/<script[\s\S]*?<\/script>/gi, '');
+    resultDiv.innerHTML = cleanHtml;
+
+    statusDiv.textContent = '読み込み完了';
   } catch (e) {
-    resultDiv.innerHTML = `<p>取得できませんでした</p>`;
     console.error(e);
+    resultDiv.innerHTML = '<p>アクセスできませんでした</p>';
+    statusDiv.textContent = 'エラー発生';
   }
 });
