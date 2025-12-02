@@ -1,6 +1,6 @@
 # ZCP Proxy
 
-軽量＆安定動作のプロキシダッシュボード  
+軽量＆安定動作のプロキシダッシュボードです！
 GitHub Pages から簡単に利用可能です。
 皆さんご自由にお使いください。
 site URL:https://kotopiro.github.io/zcp.github.io/
@@ -30,3 +30,4 @@ site URL:https://kotopiro.github.io/zcp.github.io/
 
 ## 📦 ファイル構成
 
+し　ら　ん　が　な
