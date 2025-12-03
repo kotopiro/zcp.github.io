@@ -4,7 +4,7 @@ const ctx = canvas.getContext('2d');
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 const stars = [];
-for (let i = 0; i < 100; i++) { // 星の数を減らして軽量化
+for (let i = 0; i < 100; i++) {
   stars.push({ x: Math.random()*canvas.width, y: Math.random()*canvas.height, size: Math.random()*2+1, speed: Math.random()*0.5+0.1 });
 }
 function animateStars() {
