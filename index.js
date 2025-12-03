@@ -10,6 +10,7 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const PORT = process.env.PORT || 10000;
 
+// 静的ファイル配信
 app.use(compression());
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -26,9 +27,9 @@ app.get('/proxy', async (req, res) => {
   }
 });
 
-// それ以外は index.html を返す
+// それ以外は index.html
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-app.listen(PORT, () => console.log(`ZCP Render Server running on port ${PORT}`));
+app.listen(PORT, () => console.log(`ZCP Render Proxy Server running on port ${PORT}`));
