@@ -10,5 +10,8 @@
     "compression": "^1.7.4",
     "node-fetch": "^3.3.2"
   },
-  "type": "module"
+  "type": "module",
+  "engines": {
+    "node": "18.x"
+  }
 }
