@@ -1,8 +1,31 @@
+// --- 軽量星空アニメ ---
+const canvas = document.getElementById('starfield');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+const stars = [];
+for (let i = 0; i < 100; i++) { // 星の数を減らして軽量化
+  stars.push({ x: Math.random()*canvas.width, y: Math.random()*canvas.height, size: Math.random()*2+1, speed: Math.random()*0.5+0.1 });
+}
+function animateStars() {
+  ctx.fillStyle = "#000";
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+  ctx.fillStyle = "#fff";
+  for(const s of stars){
+    s.y += s.speed;
+    if(s.y>canvas.height)s.y=0;
+    ctx.fillRect(s.x,s.y,s.size,s.size);
+  }
+  requestAnimationFrame(animateStars);
+}
+animateStars();
+
+// --- about:blank ブラウザ & Proxy ---
 document.getElementById('launch-btn').addEventListener('click', () => {
   const url = document.getElementById('launch-url').value.trim();
   if (!url) return alert('URL を入力してください');
 
-  const proxyServer = "https://proxy-server-03vk.onrender.com/proxy?URL="; // ← 独立プロキシの URL に置き換え
+  const proxyServer = "https://proxy-server-03vk.onrender.com/proxy?url=";
 
   const win = window.open('about:blank', '_blank', 'noopener');
   if (!win) return alert('ポップアップがブロックされています');
