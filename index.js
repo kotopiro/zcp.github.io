@@ -13,7 +13,6 @@ const PORT = process.env.PORT || 10000;
 app.use(compression());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// 個人用プロキシ
 app.get('/proxy', async (req, res) => {
   const target = req.query.url;
   if(!target) return res.status(400).send('Missing URL');
@@ -26,7 +25,6 @@ app.get('/proxy', async (req, res) => {
   }
 });
 
-// それ以外は index.html
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
