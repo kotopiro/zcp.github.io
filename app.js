@@ -30,7 +30,7 @@ document.getElementById('proxyForm').addEventListener('submit', e=>{
 });
 
 function openProxyWindow(targetUrl) {
-  const proxyServer = 'https://https://proxy-server-03vk.onrender.com'; // ここに Render プロキシURL
+  const proxyServer = 'https://proxy-server-03vk.onrender.com'; // ここに Render プロキシURL
   const win = window.open('', '_blank');
   win.document.write(`
     <!DOCTYPE html>
