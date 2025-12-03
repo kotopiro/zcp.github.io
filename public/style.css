@@ -13,13 +13,13 @@ canvas#starfield {
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: 0;          /* 背景に配置 */
-  pointer-events: none; /* マウス操作を透過 */
+  z-index: 0;
+  pointer-events: none; /* 背景なのでマウス操作を透過 */
 }
 
 .launch-wrap {
   position: relative;
-  z-index: 1; /* canvas の上に置く */
+  z-index: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
