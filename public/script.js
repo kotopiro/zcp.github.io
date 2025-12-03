@@ -1,10 +1,8 @@
-import { createStarfield } from './starfield.js';
-
 document.getElementById('launch-btn').addEventListener('click', () => {
   const url = document.getElementById('launch-url').value.trim();
   if (!url) return alert('URL を入力してください');
 
-  const proxyServer = "https://zcp-github-io-1.onrender.com/proxy?url="; // ← Render URL に置き換え
+  const proxyServer = "https://YOUR_PROXY_SERVER/proXY?url="; // ← 独立プロキシの URL に置き換え
 
   const win = window.open('about:blank', '_blank', 'noopener');
   if (!win) return alert('ポップアップがブロックされています');
@@ -62,8 +60,6 @@ backBtn.onclick = () => { if(historyIndex>0){ historyIndex--; loadURL(historySta
 forwardBtn.onclick = () => { if(historyIndex<historyStack.length-1){ historyIndex++; loadURL(historyStack[historyIndex]); } };
 
 if(urlInput.value) loadURL(urlInput.value);
-
-import('./starfield.js').then(m => m.createStarfield(window));
 </script>
 </body>
 </html>
