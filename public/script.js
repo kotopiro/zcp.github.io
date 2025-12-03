@@ -5,7 +5,8 @@ document.getElementById('launch-btn').addEventListener('click', () => {
   const win = window.open('about:blank', '_blank', 'noopener');
   if(!win){ alert('ポップアップがブロックされています'); return; }
 
-  const proxyServer = "https://YOUR_RENDER_URL_HERE/proxy?url="; // ← Render URLに置き換え
+  // デプロイ後の Render URL に置き換え
+  const proxyServer = "https://YOUR_RENDER_URL_HERE/proxy?url=";
 
   const html = `
 <!DOCTYPE html>
@@ -73,10 +74,10 @@ forwardBtn.onclick=()=>{
   }
 };
 
-if(urlInput.value) loadURL(urlInput.value);
-
-// 星空アニメーション呼び出し
+// 星空アニメーション
 import('./starfield.js').then(m=>m.createStarfield(window));
+
+if(urlInput.value) loadURL(urlInput.value);
 </script>
 </body>
 </html>
