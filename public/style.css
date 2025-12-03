@@ -6,23 +6,27 @@ body {
   overflow: hidden;
   height: 100vh;
 }
+
 canvas#starfield {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: 0;
+  z-index: 0;          /* 背景に配置 */
+  pointer-events: none; /* マウス操作を透過 */
 }
+
 .launch-wrap {
   position: relative;
-  z-index: 1;
+  z-index: 1; /* canvas の上に置く */
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 12px;
   padding-top: 60px;
 }
+
 input {
   padding: 8px;
   border-radius: 6px;
@@ -31,6 +35,7 @@ input {
   background: #222;
   color: #5ee7ff;
 }
+
 button {
   padding: 8px 12px;
   border-radius: 6px;
@@ -39,6 +44,7 @@ button {
   color: #5ee7ff;
   cursor: pointer;
 }
+
 .credits {
   font-size: 0.8em;
   color: #888;
