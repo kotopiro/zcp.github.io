@@ -2,7 +2,7 @@ document.getElementById('launch-btn').addEventListener('click', () => {
   const url = document.getElementById('launch-url').value.trim();
   if (!url) return alert('URL を入力してください');
 
-  const proxyServer = "https://YOUR_PROXY_SERVER/proXY?url="; // ← 独立プロキシの URL に置き換え
+  const proxyServer = "https://proxy-server-03vk.onrender.com/proxy?URL="; // ← 独立プロキシの URL に置き換え
 
   const win = window.open('about:blank', '_blank', 'noopener');
   if (!win) return alert('ポップアップがブロックされています');
