@@ -27,13 +27,13 @@ document.getElementById('launch-btn').addEventListener('click', () => {
 
   const proxyServer = "https://proxy-server-03vk.onrender.com/proxy?url=";
 
-  const win = window.open('about:blank', '_blank', 'noopener');
+  // ポップアップを開く
+  const win = window.open('', '_blank', 'noopener,width=1000,height=700');
   if (!win) return alert('ポップアップがブロックされています');
 
-  setTimeout(() => {
-    const html = `
-<!DOCTYPE html>
-<html>
+  // DOMContentLoaded イベントで安全に iframe を作成
+  win.document.write(`<!DOCTYPE html>
+<html lang="ja">
 <head>
 <meta charset="UTF-8">
 <title>ZCP Proxy Browser</title>
@@ -41,7 +41,7 @@ document.getElementById('launch-btn').addEventListener('click', () => {
 body{margin:0;background:#000;color:#fff;font-family:sans-serif;display:flex;flex-direction:column;height:100vh;}
 #toolbar{display:flex;gap:6px;padding:8px;background:#111;}
 #url{flex:1;padding:8px;border-radius:6px;border:none;background:#222;color:#5ee7ff;}
-#go,#proxyToggle,#back,#forward{padding:8px;border-radius:6px;border:none;background:#333;color:#5ee7ff;cursor:pointer;}
+#go{padding:8px;border-radius:6px;border:none;background:#333;color:#5ee7ff;cursor:pointer;}
 #iframeView{flex:1;width:100%;border:none;}
 </style>
 </head>
@@ -51,28 +51,21 @@ body{margin:0;background:#000;color:#fff;font-family:sans-serif;display:flex;fle
 <button id="go">Go</button>
 </div>
 <iframe id="iframeView"></iframe>
-<script type="module">
-const iframe = document.getElementById('iframeView');
-const urlInput = document.getElementById('url');
-
-function loadURL(u){
-  if(!u) return;
-  if(!u.startsWith('http')) u='https://'+u;
-  // プロキシ経由で URL を iframe に設定
-  iframe.src = "https://proxy-server-03vk.onrender.com/proxy?url=" + encodeURIComponent(u);
-}
-
-document.getElementById('go').onclick = () => loadURL(urlInput.value);
-urlInput.addEventListener('keydown', e => { if(e.key==='Enter') loadURL(urlInput.value); });
-
-// 初期ロード
-if(urlInput.value) loadURL(urlInput.value);
+<script>
+document.addEventListener('DOMContentLoaded', ()=>{
+  const iframe = document.getElementById('iframeView');
+  const input = document.getElementById('url');
+  function loadURL(u){
+    if(!u) return;
+    if(!u.startsWith('http')) u='https://'+u;
+    iframe.src = "${proxyServer}" + encodeURIComponent(u);
+  }
+  document.getElementById('go').onclick = ()=>loadURL(input.value);
+  input.addEventListener('keydown', e=>{ if(e.key==='Enter') loadURL(input.value); });
+  loadURL(input.value);
+});
 </script>
 </body>
-</html>
-    `;
-    win.document.open();
-    win.document.write(html);
-    win.document.close();
-  }, 10);
+</html>`);
+  win.document.close();
 });
