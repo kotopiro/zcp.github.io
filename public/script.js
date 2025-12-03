@@ -2,13 +2,15 @@ import { createStarfield } from './starfield.js';
 
 document.getElementById('launch-btn').addEventListener('click', () => {
   const url = document.getElementById('launch-url').value.trim();
+  if (!url) return alert('URL を入力してください');
+
+  const proxyServer = "https://zcp-github-io-1.onrender.com/proxy?url="; // ← Render URL に置き換え
+
   const win = window.open('about:blank', '_blank', 'noopener');
-  if(!win){ alert('ポップアップがブロックされています'); return; }
+  if (!win) return alert('ポップアップがブロックされています');
 
-  // デプロイ後の Render URL に置き換え
-  const proxyServer = "https://YOUR_RENDER_URL_HERE/proxy?url=";
-
-  const html = `
+  setTimeout(() => {
+    const html = `
 <!DOCTYPE html>
 <html>
 <head>
@@ -45,43 +47,29 @@ function loadURL(u){
   if(!u) return;
   if(!u.startsWith('http')) u='https://'+u;
   iframe.src = proxy ? "${proxyServer}" + encodeURIComponent(u) : u;
-
   if(historyIndex===-1 || historyStack[historyIndex]!==u){
     historyStack.splice(historyIndex+1);
     historyStack.push(u);
     historyIndex=historyStack.length-1;
   }
+  urlInput.value = u;
 }
-document.getElementById('go').onclick=()=>loadURL(urlInput.value);
-urlInput.addEventListener('keydown',e=>{if(e.key==='Enter') loadURL(urlInput.value)});
-proxyBtn.onclick=()=>{
-  proxy=!proxy;
-  proxyBtn.textContent = proxy?'Proxy: ON':'Proxy: OFF';
-  if(urlInput.value) loadURL(urlInput.value);
-};
-backBtn.onclick=()=>{
-  if(historyIndex>0){
-    historyIndex--;
-    urlInput.value=historyStack[historyIndex];
-    loadURL(urlInput.value);
-  }
-};
-forwardBtn.onclick=()=>{
-  if(historyIndex<historyStack.length-1){
-    historyIndex++;
-    urlInput.value=historyStack[historyIndex];
-    loadURL(urlInput.value);
-  }
-};
 
-// 星空アニメーション
-import('./starfield.js').then(m=>m.createStarfield(window));
+document.getElementById('go').onclick = () => loadURL(urlInput.value);
+urlInput.addEventListener('keydown', e => { if(e.key==='Enter') loadURL(urlInput.value); });
+proxyBtn.onclick = () => { proxy = !proxy; proxyBtn.textContent = proxy?'Proxy: ON':'Proxy: OFF'; if(urlInput.value) loadURL(urlInput.value); };
+backBtn.onclick = () => { if(historyIndex>0){ historyIndex--; loadURL(historyStack[historyIndex]); } };
+forwardBtn.onclick = () => { if(historyIndex<historyStack.length-1){ historyIndex++; loadURL(historyStack[historyIndex]); } };
 
 if(urlInput.value) loadURL(urlInput.value);
+
+import('./starfield.js').then(m => m.createStarfield(window));
 </script>
 </body>
 </html>
-  `;
-  win.document.write(html);
-  win.document.close();
+    `;
+    win.document.open();
+    win.document.write(html);
+    win.document.close();
+  }, 1);
 });
