@@ -30,7 +30,9 @@ document.getElementById('proxyForm').addEventListener('submit', e=>{
 });
 
 function openProxyWindow(targetUrl) {
-  const proxyServer = 'https://proxy-server-03vk.onrender.com'; // ここに Render プロキシURL
+  // ← ここに Render プロキシサーバーの Live URL を入れる
+  const proxyServer = 'https://proxy-server-03vk.onrender.com';  
+
   const win = window.open('', '_blank');
   win.document.write(`
     <!DOCTYPE html>
@@ -60,8 +62,38 @@ function openProxyWindow(targetUrl) {
       <script>
         const iframe = document.getElementById('proxy-frame');
         const urlInput = document.getElementById('url-bar');
-        document.getElementById('reload').onclick = () => iframe.src = iframe.src;
-        urlInput.onchange = () => iframe.src = '${proxyServer}/proxy?url=' + encodeURIComponent(urlInput.value);
+        const historyStack = [];
+        let historyIndex = -1;
+
+        function loadUrl(url) {
+          iframe.src = '${proxyServer}/proxy?url=' + encodeURIComponent(url);
+          historyStack.splice(historyIndex+1);
+          historyStack.push(url);
+          historyIndex++;
+          urlInput.value = url;
+        }
+
+        document.getElementById('reload').onclick = () => {
+          iframe.src = iframe.src;
+        };
+
+        document.getElementById('back').onclick = () => {
+          if(historyIndex>0){
+            historyIndex--;
+            loadUrl(historyStack[historyIndex]);
+          }
+        };
+
+        document.getElementById('forward').onclick = () => {
+          if(historyIndex<historyStack.length-1){
+            historyIndex++;
+            loadUrl(historyStack[historyIndex]);
+          }
+        };
+
+        urlInput.onchange = () => {
+          loadUrl(urlInput.value);
+        };
       </script>
     </body>
     </html>
