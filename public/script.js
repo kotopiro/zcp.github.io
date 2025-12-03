@@ -47,41 +47,25 @@ body{margin:0;background:#000;color:#fff;font-family:sans-serif;display:flex;fle
 </head>
 <body>
 <div id="toolbar">
-<button id="back">◀</button>
-<button id="forward">▶</button>
 <input id="url" value="${url}" />
 <button id="go">Go</button>
-<button id="proxyToggle">Proxy: ON</button>
 </div>
 <iframe id="iframeView"></iframe>
 <script type="module">
-const iframe=document.getElementById('iframeView');
-const urlInput=document.getElementById('url');
-const proxyBtn=document.getElementById('proxyToggle');
-const backBtn=document.getElementById('back');
-const forwardBtn=document.getElementById('forward');
-let proxy=true;
-const historyStack=[];
-let historyIndex=-1;
+const iframe = document.getElementById('iframeView');
+const urlInput = document.getElementById('url');
 
 function loadURL(u){
   if(!u) return;
   if(!u.startsWith('http')) u='https://'+u;
-  iframe.src = proxy ? "${proxyServer}" + encodeURIComponent(u) : u;
-  if(historyIndex===-1 || historyStack[historyIndex]!==u){
-    historyStack.splice(historyIndex+1);
-    historyStack.push(u);
-    historyIndex=historyStack.length-1;
-  }
-  urlInput.value = u;
+  // プロキシ経由で URL を iframe に設定
+  iframe.src = "https://proxy-server-03vk.onrender.com/proxy?url=" + encodeURIComponent(u);
 }
 
 document.getElementById('go').onclick = () => loadURL(urlInput.value);
 urlInput.addEventListener('keydown', e => { if(e.key==='Enter') loadURL(urlInput.value); });
-proxyBtn.onclick = () => { proxy = !proxy; proxyBtn.textContent = proxy?'Proxy: ON':'Proxy: OFF'; if(urlInput.value) loadURL(urlInput.value); };
-backBtn.onclick = () => { if(historyIndex>0){ historyIndex--; loadURL(historyStack[historyIndex]); } };
-forwardBtn.onclick = () => { if(historyIndex<historyStack.length-1){ historyIndex++; loadURL(historyStack[historyIndex]); } };
 
+// 初期ロード
 if(urlInput.value) loadURL(urlInput.value);
 </script>
 </body>
@@ -90,5 +74,5 @@ if(urlInput.value) loadURL(urlInput.value);
     win.document.open();
     win.document.write(html);
     win.document.close();
-  }, 1);
+  }, 10);
 });
