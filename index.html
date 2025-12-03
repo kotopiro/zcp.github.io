@@ -1,20 +1,16 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ZCP Proxy UI</title>
-<link rel="stylesheet" href="./style.css">
+  <meta charset="UTF-8">
+  <title>ZCP Proxy UI</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div class="container">
-  <h1>ZCP Proxy</h1>
-  <form id="proxyForm">
-    <input type="url" id="urlInput" placeholder="https://example.com" required>
-    <button type="submit">Launch</button>
-  </form>
-</div>
-<canvas id="starfield"></canvas>
-<script src="./app.js"></script>
+  <canvas id="starfield"></canvas>
+  <div id="ui-container">
+    <input type="url" id="urlInput" placeholder="URLを入力">
+    <button id="launch">Launch</button>
+  </div>
+  <script src="app.js"></script>
 </body>
 </html>
