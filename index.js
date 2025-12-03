@@ -13,18 +13,20 @@ const PORT = process.env.PORT || 10000;
 app.use(compression());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// プロキシエンドポイント
 app.get('/proxy', async (req, res) => {
   const target = req.query.url;
-  if(!target) return res.status(400).send('Missing URL');
+  if (!target) return res.status(400).send('Missing URL');
   try {
     const response = await fetch(target);
     const body = await response.text();
     res.send(body);
-  } catch(err) {
+  } catch (err) {
     res.status(500).send(err.toString());
   }
 });
 
+// それ以外は index.html を返す
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
