@@ -1,14 +1,13 @@
 # ZCP Proxy
 
 軽量＆安定動作のプロキシダッシュボードです！
-GitHub Pages から簡単に利用可能です。
 皆さんご自由にお使いください。
-site URL:https://kotopiro.github.io/zcp.github.io/
+site URL: ???(試験段階です)
 ---
 
 ## 🖥 利用規約
 
-動かし方は以下のリンクを参照してください。  
+利用規約は以下のリンクをご覧ください。  
 [ZCP Proxy GitHub Pages 利用規約](https://school-rekisi.kesug.com)
 
 ---
@@ -18,6 +17,7 @@ site URL:https://kotopiro.github.io/zcp.github.io/
 - ダークテーマ & モダンカードデザイン  
 - ボタン・入力欄・結果表示にシャドウを追加  
 - 読み込み中 / エラー表示あり  
+- あとは考えて
 
 ---
 
