@@ -1,19 +1,3 @@
-// ---------- Starfield ----------
-const canvas = document.getElementById('starfield');
-const ctx = canvas.getContext('2d');
-let stars = [];
-function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
-window.addEventListener('resize', resize); resize();
-for (let i=0;i<200;i++) stars.push({x:Math.random()*canvas.width, y:Math.random()*canvas.height, size:Math.random()*2, speed:Math.random()*0.5+0.1});
-function animate() {
-  ctx.fillStyle='black';
-  ctx.fillRect(0,0,canvas.width,canvas.height);
-  ctx.fillStyle='white';
-  stars.forEach(s=>{ s.y-=s.speed; if(s.y<0)s.y=canvas.height; ctx.beginPath(); ctx.arc(s.x,s.y,s.size,0,2*Math.PI); ctx.fill(); });
-  requestAnimationFrame(animate);
-}
-animate();
-
 // ---------- Proxy launch ----------
 document.getElementById('launch').addEventListener('click', ()=>{
   const url = document.getElementById('urlInput').value;
@@ -22,9 +6,18 @@ document.getElementById('launch').addEventListener('click', ()=>{
 });
 
 function openProxyWindow(targetUrl) {
-  const proxyServer = 'https://proxy-server-03vk.onrender.com'; // ← RenderでデプロイしたプロキシURLに置き換え
+  const proxyServer = 'https://proxy-server-03vk.onrender.com'; // ← RenderでデプロイしたプロキシURL
 
+  // 1. 新しいウィンドウを開く
   const win = window.open('', '_blank');
+  
+  // 2. ポップアップブロックのチェック（ガード句を追加）
+  if (!win) {
+    alert('⚠️ ポップアップがブロックされました！\nブラウザのアドレスバー右側などから「ポップアップを常に許可」に設定してください。');
+    return; // null の場合はここで処理を中断する
+  }
+
+  // 3. 安全に document に書き込みを行う
   win.document.write(`
     <!DOCTYPE html>
     <html>
