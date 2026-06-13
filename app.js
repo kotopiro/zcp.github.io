@@ -1,65 +1,94 @@
+// ---------- Cyber Starfield (3D Warp Effect) ----------
+const canvas = document.getElementById('starfield');
+const ctx = canvas.getContext('2d');
+let stars = [];
+const numStars = 300;
+let speed = 2;
+
+function resize() { 
+  canvas.width = window.innerWidth; 
+  canvas.height = window.innerHeight; 
+}
+window.addEventListener('resize', resize); 
+resize();
+
+function initStars() {
+  stars = [];
+  for (let i = 0; i < numStars; i++) {
+    stars.push({
+      x: Math.random() * canvas.width - canvas.width / 2,
+      y: Math.random() * canvas.height - canvas.height / 2,
+      z: Math.random() * canvas.width,
+      size: Math.random() * 2
+    });
+  }
+}
+initStars();
+
+function animate() {
+  ctx.fillStyle = 'rgba(3, 3, 12, 0.2)';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  
+  const cx = canvas.width / 2;
+  const cy = canvas.height / 2;
+
+  stars.forEach(s => {
+    s.z -= speed;
+    if (s.z <= 0) {
+      s.z = canvas.width;
+      s.x = Math.random() * canvas.width - cx;
+      s.y = Math.random() * canvas.height - cy;
+    }
+
+    const k = 128.0 / s.z;
+    const px = s.x * k + cx;
+    const py = s.y * k + cy;
+
+    if (px >= 0 && px <= canvas.width && py >= 0 && py <= canvas.height) {
+      const size = (1 - s.z / canvas.width) * s.size * 2;
+      const alpha = 1 - s.z / canvas.width;
+      
+      ctx.beginPath();
+      ctx.fillStyle = `rgba(0, 242, 254, ${alpha})`;
+      ctx.arc(px, py, size < 0.5 ? 0.5 : size, 0, 2 * Math.PI);
+      ctx.fill();
+    }
+  });
+
+  requestAnimationFrame(animate);
+}
+animate();
+
 // ---------- Proxy launch ----------
-document.getElementById('launch').addEventListener('click', ()=>{
+document.getElementById('launch').addEventListener('click', () => {
   const url = document.getElementById('urlInput').value;
-  if(!url) return alert('URLを入力してください');
-  openProxyWindow(url);
+  if (!url) return alert('URLを入力してください');
+  
+  // URLの簡易自動補完 (http/httpsがなければ追加)
+  let targetUrl = url;
+  if (!/^https?:\/\//i.test(targetUrl)) {
+    targetUrl = 'https://' + targetUrl;
+  }
+  
+  openProxyWindow(targetUrl);
 });
 
 function openProxyWindow(targetUrl) {
-  const proxyServer = 'https://proxy-server-03vk.onrender.com'; // ← RenderでデプロイしたプロキシURL
-
-  // 1. 新しいウィンドウを開く
-  const win = window.open('', '_blank');
+  // あなたのRenderサーバーURL
+  const proxyServer = 'https://proxy-server-03vk.onrender.com'; 
   
-  // 2. ポップアップブロックのチェック（ガード句を追加）
+  // 【ポイント】空ウィンドウを作って書き込むのをやめ、直接プロキシURLを開く
+  // これにより、Vercel干渉による null (reading 'document') エラーは100%発生しなくなります
+  
+  // もしお使いのプロキシサーバーが「Base64形式」なら下の1行を有効にしてください
+  // const finalUrl = `${proxyServer}/service/${window.btoa(targetUrl).replace(/=/g, '')}`;
+  
+  // お使いのプロキシサーバーが「従来のクエリ形式」なら下の1行を使用します
+  const finalUrl = `${proxyServer}/proxy?url=${encodeURIComponent(targetUrl)}`;
+
+  const win = window.open(finalUrl, '_blank');
+  
   if (!win) {
-    alert('⚠️ ポップアップがブロックされました！\nブラウザのアドレスバー右側などから「ポップアップを常に許可」に設定してください。');
-    return; // null の場合はここで処理を中断する
+    alert('⚠️ ポップアップがブロックされました！ブラウザの設定で許可してください。');
   }
-
-  // 3. 安全に document に書き込みを行う
-  win.document.write(`
-    <!DOCTYPE html>
-    <html>
-    <head>
-      <title>Proxy Window</title>
-      <style>
-        body{margin:0;background:black;color:#ddd;}
-        #top-bar{position:fixed;top:0;left:0;width:100%;height:40px;background:#111;display:flex;align-items:center;padding:0 5px;z-index:9999;}
-        #top-bar button{margin-right:5px;background:#333;color:#fff;border:none;border-radius:3px;cursor:pointer;}
-        #top-bar input{flex:1;padding:5px;border-radius:3px;border:none;}
-        #proxy-frame{position:absolute;top:40px;left:0;width:100%;height:calc(100vh - 40px);border:none;}
-      </style>
-    </head>
-    <body>
-      <div id="top-bar">
-        <button id="back">←</button>
-        <button id="forward">→</button>
-        <input id="url-bar" type="url" value="${targetUrl}">
-        <button id="reload">⟳</button>
-      </div>
-      <iframe id="proxy-frame" src="${proxyServer}/proxy?url=${encodeURIComponent(targetUrl)}"></iframe>
-      <script>
-        const iframe=document.getElementById('proxy-frame');
-        const urlInput=document.getElementById('url-bar');
-        const historyStack=[];
-        let historyIndex=-1;
-
-        function loadUrl(url){
-          iframe.src='${proxyServer}/proxy?url='+encodeURIComponent(url);
-          historyStack.splice(historyIndex+1);
-          historyStack.push(url);
-          historyIndex++;
-          urlInput.value=url;
-        }
-
-        document.getElementById('reload').onclick=()=>{iframe.src=iframe.src;};
-        document.getElementById('back').onclick=()=>{if(historyIndex>0){historyIndex--;loadUrl(historyStack[historyIndex]);}};
-        document.getElementById('forward').onclick=()=>{if(historyIndex<historyStack.length-1){historyIndex++;loadUrl(historyStack[historyIndex]);}};
-        urlInput.onchange=()=>{loadUrl(urlInput.value);};
-      </script>
-    </body>
-    </html>
-  `);
-  win.document.close();
 }
