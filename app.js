@@ -64,7 +64,6 @@ document.getElementById('launch').addEventListener('click', () => {
   const url = document.getElementById('urlInput').value;
   if (!url) return alert('URLを入力してください');
   
-  // URLの簡易自動補完 (http/httpsがなければ追加)
   let targetUrl = url;
   if (!/^https?:\/\//i.test(targetUrl)) {
     targetUrl = 'https://' + targetUrl;
@@ -74,21 +73,67 @@ document.getElementById('launch').addEventListener('click', () => {
 });
 
 function openProxyWindow(targetUrl) {
-  // あなたのRenderサーバーURL
-  const proxyServer = 'https://proxy-server-03vk.onrender.com'; 
-  
-  // 【ポイント】空ウィンドウを作って書き込むのをやめ、直接プロキシURLを開く
-  // これにより、Vercel干渉による null (reading 'document') エラーは100%発生しなくなります
-  
-  // もしお使いのプロキシサーバーが「Base64形式」なら下の1行を有効にしてください
-  // const finalUrl = `${proxyServer}/service/${window.btoa(targetUrl).replace(/=/g, '')}`;
-  
-  // お使いのプロキシサーバーが「従来のクエリ形式」なら下の1行を使用します
-  const finalUrl = `${proxyServer}/proxy?url=${encodeURIComponent(targetUrl)}`;
+  const proxyServer = 'https://proxy-server-03vk.onrender.com';
 
-  const win = window.open(finalUrl, '_blank');
+  // about:blank を明示的に指定して新しいウィンドウを開く
+  const win = window.open('about:blank', '_blank');
   
+  // ポップアップブロックなどで開けなかった場合のセーフティ
   if (!win) {
     alert('⚠️ ポップアップがブロックされました！ブラウザの設定で許可してください。');
+    return;
   }
+
+  // Vercelなどの外部ツールが割り込む前に、即座に空のドキュメントを開いてロックを確保する
+  win.document.open();
+  
+  win.document.write(`
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="UTF-8">
+      <title>Proxy Window</title>
+      <style>
+        body{margin:0;background:#03030c;color:#e2e8f0;font-family:sans-serif;}
+        #top-bar{position:fixed;top:0;left:0;width:100%;height:45px;background:rgba(10, 10, 25, 0.8);backdrop-filter:blur(10px);display:flex;align-items:center;padding:0 15px;z-index:9999;box-sizing:border-box;border-bottom:1px solid rgba(0, 242, 254, 0.2);}
+        #top-bar button{margin-right:8px;background:#1a1a3a;color:#00f2fe;border:1px solid rgba(0, 242, 254, 0.4);border-radius:4px;cursor:pointer;padding:6px 12px;font-weight:bold;transition:all 0.2s;}
+        #top-bar button:hover{background:#00f2fe;color:#000;box-shadow:0 0 10px rgba(0, 242, 254, 0.5);}
+        #top-bar input{flex:1;padding:6px 12px;border-radius:4px;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.05);color:#fff;outline:none;}
+        #top-bar input:focus{border-color:#00f2fe;}
+        #proxy-frame{position:absolute;top:45px;left:0;width:100%;height:calc(100vh - 45px);border:none;background:white;}
+      </style>
+    </head>
+    <body>
+      <div id="top-bar">
+        <button id="back">←</button>
+        <button id="forward">→</button>
+        <input id="url-bar" type="url" value="${targetUrl}">
+        <button id="reload">⟳</button>
+      </div>
+      <iframe id="proxy-frame" src="${proxyServer}/proxy?url=${encodeURIComponent(targetUrl)}"></iframe>
+      
+      <script>
+        const iframe = document.getElementById('proxy-frame');
+        const urlInput = document.getElementById('url-bar');
+        const historyStack = ['${targetUrl}'];
+        let historyIndex = 0;
+
+        function loadUrl(url){
+          iframe.src = '${proxyServer}/proxy?url=' + encodeURIComponent(url);
+          historyStack.splice(historyIndex + 1);
+          historyStack.push(url);
+          historyIndex++;
+          urlInput.value = url;
+        }
+
+        document.getElementById('reload').onclick = () => { iframe.src = iframe.src; };
+        document.getElementById('back').onclick = () => { if(historyIndex > 0){ historyIndex--; iframe.src = '${proxyServer}/proxy?url=' + encodeURIComponent(historyStack[historyIndex]); urlInput.value = historyStack[historyIndex]; } };
+        document.getElementById('forward').onclick = () => { if(historyIndex < historyStack.length - 1){ historyIndex++; iframe.src = '${proxyServer}/proxy?url=' + encodeURIComponent(historyStack[historyIndex]); urlInput.value = historyStack[historyIndex]; } };
+        urlInput.onchange = () => { loadUrl(urlInput.value); };
+      </script>
+    </body>
+    </html>
+  `);
+  
+  win.document.close();
 }
